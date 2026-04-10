@@ -1,0 +1,143 @@
+local ClearLib = {}
+
+function ClearLib:CreateWindow(headerTitle, minifiedText, creditText, creditColor)
+    local ScreenGui = Instance.new("ScreenGui")
+    local MainFrame = Instance.new("Frame")
+    local Header = Instance.new("Frame")
+    local HeaderTitle = Instance.new("TextLabel")
+    local Content = Instance.new("Frame")
+    local CloseArea = Instance.new("Frame")
+    local CreditLabel = Instance.new("TextLabel") -- Label untuk Credit
+    
+    -- Setup ScreenGui
+    ScreenGui.Name = "ClearLib_Final"
+    ScreenGui.Parent = game.CoreGui
+    ScreenGui.ResetOnSpawn = false
+
+    -- === 1. Main UI (Window) ===
+    MainFrame.Name = "MainFrame"
+    MainFrame.Parent = ScreenGui
+    MainFrame.BackgroundColor3 = Color3.fromRGB(0, 255, 127) -- Tosca
+    MainFrame.BorderSizePixel = 4 
+    MainFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+    MainFrame.Size = UDim2.new(0, 450, 0, 300)
+    MainFrame.Active = true
+
+    -- Header Abu-abu
+    Header.Name = "Header"
+    Header.Parent = MainFrame
+    Header.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    Header.BorderSizePixel = 2
+    Header.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Header.Size = UDim2.new(1, 0, 0, 45)
+
+    -- Judul di Header
+    HeaderTitle.Parent = Header
+    HeaderTitle.BackgroundTransparency = 1
+    HeaderTitle.Position = UDim2.new(0, 15, 0, 0)
+    HeaderTitle.Size = UDim2.new(1, -60, 1, 0)
+    HeaderTitle.Font = Enum.Font.SourceSansBold
+    HeaderTitle.Text = headerTitle or "CLEAR LIB"
+    HeaderTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    HeaderTitle.TextSize = 18
+    HeaderTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+    -- === CREDIT LABEL (Customizable) ===
+    CreditLabel.Name = "CreditLabel"
+    CreditLabel.Parent = MainFrame
+    CreditLabel.BackgroundTransparency = 1
+    CreditLabel.Position = UDim2.new(0, 10, 1, -25) -- Di kiri bawah area Tosca
+    CreditLabel.Size = UDim2.new(1, -20, 0, 20)
+    CreditLabel.Font = Enum.Font.SourceSansBold
+    CreditLabel.Text = creditText or "powered by krinx" -- Default text
+    CreditLabel.TextSize = 14
+    CreditLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+    -- Logika Ganti Warna (Hex Support)
+    if creditColor and string.find(creditColor, "#") then
+        CreditLabel.TextColor3 = Color3.fromHex(creditColor)
+    else
+        CreditLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- Default Putih
+    end
+
+    -- Content Area
+    Content.Name = "Content"
+    Content.Parent = MainFrame
+    Content.BackgroundTransparency = 1
+    Content.Size = UDim2.new(1, 0, 1, -75) -- Agar tidak menabrak credit di bawah
+    Content.Position = UDim2.new(0, 0, 0, 45)
+
+    -- === 2. Tombol Close (X Merah) ===
+    CloseArea.Name = "CloseArea"
+    CloseArea.Parent = Header
+    CloseArea.BackgroundTransparency = 1
+    CloseArea.Size = UDim2.new(0, 35, 0, 35)
+    CloseArea.Position = UDim2.new(1, -40, 0, 5)
+    
+    local function CreateXLine(rotation)
+        local Line = Instance.new("Frame")
+        Line.Parent = CloseArea
+        Line.Size = UDim2.new(1, 0, 0, 4)
+        Line.Rotation = rotation
+        Line.Position = UDim2.new(0, 0, 0.5, -2)
+        Line.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        Line.BorderSizePixel = 0
+        return Line
+    end
+    CreateXLine(45)
+    CreateXLine(-45)
+
+    local CloseButton = Instance.new("TextButton")
+    CloseButton.Parent = CloseArea
+    CloseButton.Size = UDim2.new(1, 0, 1, 0)
+    CloseButton.BackgroundTransparency = 1
+    CloseButton.Text = ""
+
+    -- === 3. Lingkaran Tosca (Minified) ===
+    local OpenBtnFrame = Instance.new("Frame")
+    OpenBtnFrame.Parent = ScreenGui
+    OpenBtnFrame.BackgroundColor3 = Color3.fromRGB(0, 255, 127)
+    OpenBtnFrame.BorderSizePixel = 4
+    OpenBtnFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    OpenBtnFrame.Size = UDim2.new(0, 100, 0, 100)
+    OpenBtnFrame.Position = UDim2.new(0, 20, 0, 20)
+    OpenBtnFrame.Visible = false
+
+    local UICornerOpen = Instance.new("UICorner")
+    UICornerOpen.CornerRadius = UDim.new(1, 0)
+    UICornerOpen.Parent = OpenBtnFrame
+
+    local OpenText = Instance.new("TextLabel")
+    OpenText.Parent = OpenBtnFrame
+    OpenText.Size = UDim2.new(1, 0, 1, 0)
+    OpenText.BackgroundTransparency = 1
+    OpenText.Font = Enum.Font.GothamBold
+    OpenText.Text = minifiedText or "CLEAR LIB"
+    OpenText.TextColor3 = Color3.fromRGB(0, 0, 0)
+    OpenText.TextSize = 14
+    OpenText.TextWrapped = true
+
+    local OpenButton = Instance.new("TextButton")
+    OpenButton.Parent = OpenBtnFrame
+    OpenButton.Size = UDim2.new(1, 0, 1, 0)
+    OpenButton.BackgroundTransparency = 1
+    OpenButton.Text = ""
+
+    -- Logika Buka/Tutup
+    CloseButton.MouseButton1Click:Connect(function()
+        MainFrame.Visible = false
+        OpenBtnFrame.Visible = true
+    end)
+
+    OpenButton.MouseButton1Click:Connect(function()
+        MainFrame.Visible = true
+        OpenBtnFrame.Visible = false
+    end)
+
+    return Content
+end
+
+return ClearLib
+
