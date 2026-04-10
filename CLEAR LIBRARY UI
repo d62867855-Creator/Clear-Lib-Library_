@@ -26,23 +26,41 @@ function ClearLib:CreateWindow(UI_Name, Flt_Name)
         end)
     end
 
-    -- === MAIN WINDOW (MIRIP FOTO) ===
+    -- === FLOATING BUTTON (UI YANG KAMU TANYA) ===
+    local FloatingBtn = Instance.new("TextButton", sg)
+    FloatingBtn.Size = UDim2.new(0, 60, 0, 60)
+    FloatingBtn.Position = UDim2.new(0, 20, 0.5, -30)
+    FloatingBtn.BackgroundColor3 = Color3.fromRGB(85, 230, 180) -- Tosca
+    FloatingBtn.BorderSizePixel = 4
+    FloatingBtn.BorderColor3 = Color3.new(0, 0, 0)
+    FloatingBtn.Text = tostring(Flt_Name or "CLEAR")
+    FloatingBtn.Font = Enum.Font.SourceSansBold
+    FloatingBtn.TextSize = 16
+    FloatingBtn.TextColor3 = Color3.new(0, 0, 0)
+    MakeDraggable(FloatingBtn)
+
+    -- === MAIN WINDOW (PERSEGI PANJANG) ===
     local Main = Instance.new("Frame", sg)
+    Main.Visible = true
     Main.Size = UDim2.new(0, 420, 0, 260)
     Main.Position = UDim2.new(0.5, -210, 0.5, -130)
-    Main.BackgroundColor3 = Color3.fromRGB(85, 230, 180) -- Tosca pas di foto
+    Main.BackgroundColor3 = Color3.fromRGB(85, 230, 180)
     Main.BorderSizePixel = 4
     Main.BorderColor3 = Color3.new(0, 0, 0)
     MakeDraggable(Main)
 
+    FloatingBtn.MouseButton1Click:Connect(function()
+        Main.Visible = not Main.Visible
+    end)
+
     local Head = Instance.new("Frame", Main)
-    Head.Size = UDim2.new(1, 0, 0, 40)
+    Head.Size = UDim2.new(1, 0, 0, 45)
     Head.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
     Head.BorderSizePixel = 3
     Head.BorderColor3 = Color3.new(0, 0, 0)
     
     local Title = Instance.new("TextLabel", Head)
-    Title.Text = tostring(UI_Name):upper() -- Judul Custom
+    Title.Text = tostring(UI_Name or "EXAMPLE"):upper()
     Title.Size = UDim2.new(1, 0, 1, 0)
     Title.TextColor3 = Color3.new(1, 1, 1)
     Title.BackgroundTransparency = 1
@@ -50,37 +68,26 @@ function ClearLib:CreateWindow(UI_Name, Flt_Name)
     Title.TextSize = 22
 
     local Container = Instance.new("ScrollingFrame", Main)
-    Container.Size = UDim2.new(1, -30, 1, -70)
-    Container.Position = UDim2.new(0, 15, 0, 55)
+    Container.Size = UDim2.new(1, -30, 1, -75)
+    Container.Position = UDim2.new(0, 15, 0, 60)
     Container.BackgroundTransparency = 1
     Container.BorderSizePixel = 0
     Container.CanvasSize = UDim2.new(0, 0, 0, 0)
     Container.AutomaticCanvasSize = "Y"
-    Container.ScrollBarThickness = 4
+    Container.ScrollBarThickness = 5
     
     local Layout = Instance.new("UIListLayout", Container)
     Layout.Padding = UDim.new(0, 12)
 
-    -- Button X buat tutup
-    local CloseBtn = Instance.new("TextButton", Head)
-    CloseBtn.Size = UDim2.new(0, 25, 0, 25)
-    CloseBtn.Position = UDim2.new(1, -32, 0, 7)
-    CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-    CloseBtn.Text = "X"
-    CloseBtn.TextColor3 = Color3.new(1, 1, 1)
-    CloseBtn.BorderSizePixel = 2
-    CloseBtn.BorderColor3 = Color3.new(0, 0, 0)
-    CloseBtn.MouseButton1Click:Connect(function() sg:Destroy() end)
-
     local Elements = {}
 
-    -- [[ TOGGLE DENGAN SISTEM CENTANG & SILANG ]]
+    -- [[ TOGGLE DENGAN KOTAK KECIL DI DALEM ]]
     function Elements:AddToggle(cfg)
         local toggled = false
         local tgl = Instance.new("TextButton", Container)
         tgl.Size = UDim2.new(1, 0, 0, 50)
         tgl.BackgroundColor3 = Color3.fromRGB(85, 230, 180)
-        tgl.BorderSizePixel = 3
+        tgl.BorderSizePixel = 4 -- Garis samping tebal sesuai request
         tgl.BorderColor3 = Color3.new(0, 0, 0)
         tgl.Text = "  " .. tostring(cfg.Name)
         tgl.Font = Enum.Font.SourceSansBold
@@ -88,18 +95,19 @@ function ClearLib:CreateWindow(UI_Name, Flt_Name)
         tgl.TextColor3 = Color3.new(0, 0, 0)
         tgl.TextXAlignment = "Left"
         
-        -- Kotak Simbol di Kanan
-        local indFrame = Instance.new("Frame", tgl)
-        indFrame.Size = UDim2.new(0, 35, 0, 35)
-        indFrame.Position = UDim2.new(1, -45, 0.5, -17)
-        indFrame.BackgroundTransparency = 1 -- No Background
-        indFrame.BorderSizePixel = 3
-        indFrame.BorderColor3 = Color3.new(0, 0, 0)
+        -- KOTAK KECIL DI POJOK KANAN (MEDIA CENTANG/X)
+        local box = Instance.new("Frame", tgl)
+        box.Size = UDim2.new(0, 35, 0, 35)
+        box.Position = UDim2.new(1, -45, 0.5, -17)
+        box.BackgroundColor3 = Color3.new(1, 1, 1) -- Dasar Putih
+        box.BackgroundTransparency = 1 -- Kamu mau no background tadi kan?
+        box.BorderSizePixel = 3 -- Border kotak kecilnya
+        box.BorderColor3 = Color3.new(0, 0, 0)
 
-        local symbol = Instance.new("TextLabel", indFrame)
+        local symbol = Instance.new("TextLabel", box)
         symbol.Size = UDim2.new(1, 0, 1, 0)
         symbol.BackgroundTransparency = 1
-        symbol.Text = "X" -- Start dengan X (Off)
+        symbol.Text = "X"
         symbol.Font = Enum.Font.SourceSansBold
         symbol.TextSize = 25
         symbol.TextColor3 = Color3.new(0, 0, 0)
@@ -108,17 +116,18 @@ function ClearLib:CreateWindow(UI_Name, Flt_Name)
             toggled = not toggled
             cfg.Callback(toggled)
             symbol.Text = toggled and "✓" or "X"
-            -- Opsional: Warna simbol berubah pas ON
-            symbol.TextColor3 = toggled and Color3.fromRGB(0, 100, 0) or Color3.new(0, 0, 0)
         end)
     end
 
-    -- [[ TEXTBOX PERSEGI PANJANG PUTIH ]]
+    -- [[ TEXTBOX PERSEGI PANJANG ]]
     function Elements:AddTextbox(cfg)
-        local boxFrame = Instance.new("Frame", Container)
+        local boxFrame = Instance.new("TextButton", Container) -- Pake button biar background solid
         boxFrame.Size = UDim2.new(1, 0, 0, 50)
-        boxFrame.BackgroundTransparency = 1
-        
+        boxFrame.BackgroundColor3 = Color3.fromRGB(85, 230, 180)
+        boxFrame.BorderSizePixel = 4
+        boxFrame.BorderColor3 = Color3.new(0, 0, 0)
+        boxFrame.Text = "" -- Cuma buat container
+
         local label = Instance.new("TextLabel", boxFrame)
         label.Text = "  " .. tostring(cfg.Name)
         label.Size = UDim2.new(0.5, 0, 1, 0)
