@@ -1,142 +1,134 @@
 local ClearLib = {}
 
-function ClearLib:CreateWindow(headerTitle, minifiedText, creditText, creditColor)
-    local ScreenGui = Instance.new("ScreenGui")
-    local MainFrame = Instance.new("Frame")
-    local Header = Instance.new("Frame")
-    local HeaderTitle = Instance.new("TextLabel")
-    local Content = Instance.new("Frame")
-    local CloseArea = Instance.new("Frame")
-    local CreditLabel = Instance.new("TextLabel") -- Label untuk Credit
-    
-    -- Setup ScreenGui
-    ScreenGui.Name = "ClearLib_Final"
-    ScreenGui.Parent = game.CoreGui
-    ScreenGui.ResetOnSpawn = false
+function ClearLib:CreateWindow(UI_Name, Flt_Name)
+    local sg = Instance.new("ScreenGui", game.CoreGui)
+    sg.Name = "ClearLib_Fixed"
+    sg.ResetOnSpawn = false
 
-    -- === 1. Main UI (Window) ===
-    MainFrame.Name = "MainFrame"
-    MainFrame.Parent = ScreenGui
-    MainFrame.BackgroundColor3 = Color3.fromRGB(0, 255, 127) -- Tosca
-    MainFrame.BorderSizePixel = 4 
-    MainFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-    MainFrame.Size = UDim2.new(0, 450, 0, 300)
-    MainFrame.Active = true
-
-    -- Header Abu-abu
-    Header.Name = "Header"
-    Header.Parent = MainFrame
-    Header.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-    Header.BorderSizePixel = 2
-    Header.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    Header.Size = UDim2.new(1, 0, 0, 45)
-
-    -- Judul di Header
-    HeaderTitle.Parent = Header
-    HeaderTitle.BackgroundTransparency = 1
-    HeaderTitle.Position = UDim2.new(0, 15, 0, 0)
-    HeaderTitle.Size = UDim2.new(1, -60, 1, 0)
-    HeaderTitle.Font = Enum.Font.SourceSansBold
-    HeaderTitle.Text = headerTitle or "CLEAR LIB"
-    HeaderTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-    HeaderTitle.TextSize = 18
-    HeaderTitle.TextXAlignment = Enum.TextXAlignment.Left
-
-    -- === CREDIT LABEL (Customizable) ===
-    CreditLabel.Name = "CreditLabel"
-    CreditLabel.Parent = MainFrame
-    CreditLabel.BackgroundTransparency = 1
-    CreditLabel.Position = UDim2.new(0, 10, 1, -25) -- Di kiri bawah area Tosca
-    CreditLabel.Size = UDim2.new(1, -20, 0, 20)
-    CreditLabel.Font = Enum.Font.SourceSansBold
-    CreditLabel.Text = creditText or "powered by krinx" -- Default text
-    CreditLabel.TextSize = 14
-    CreditLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-    -- Logika Ganti Warna (Hex Support)
-    if creditColor and string.find(creditColor, "#") then
-        CreditLabel.TextColor3 = Color3.fromHex(creditColor)
-    else
-        CreditLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- Default Putih
+    -- === FUNGSI DRAG FIX (Anti Macet) ===
+    local function MakeDraggable(frame)
+        local dragToggle, dragStart, startPos
+        frame.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                dragToggle = true
+                dragStart = input.Position
+                startPos = frame.Position
+                input.Changed:Connect(function()
+                    if input.UserInputState == Enum.UserInputState.End then dragToggle = false end
+                end)
+            end
+        end)
+        game:GetService("UserInputService").InputChanged:Connect(function(input)
+            if dragToggle and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+                local delta = input.Position - dragStart
+                frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+            end
+        end)
     end
 
-    -- Content Area
-    Content.Name = "Content"
-    Content.Parent = MainFrame
-    Content.BackgroundTransparency = 1
-    Content.Size = UDim2.new(1, 0, 1, -75) -- Agar tidak menabrak credit di bawah
-    Content.Position = UDim2.new(0, 0, 0, 45)
+    -- === MAIN WINDOW (Rayfield Size) ===
+    local Main = Instance.new("Frame", sg)
+    Main.Size = UDim2.new(0, 400, 0, 250)
+    Main.Position = UDim2.new(0.5, -200, 0.5, -125)
+    Main.BackgroundColor3 = Color3.fromRGB(0, 255, 127)
+    Main.BorderSizePixel = 4
+    Main.BorderColor3 = Color3.new(0,0,0)
+    Main.Active = true
+    MakeDraggable(Main) -- Inisialisasi Drag di sini
 
-    -- === 2. Tombol Close (X Merah) ===
-    CloseArea.Name = "CloseArea"
-    CloseArea.Parent = Header
-    CloseArea.BackgroundTransparency = 1
-    CloseArea.Size = UDim2.new(0, 35, 0, 35)
-    CloseArea.Position = UDim2.new(1, -40, 0, 5)
+    -- Header (Bisa buat nge-drag juga kalau di klik)
+    local Head = Instance.new("Frame", Main)
+    Head.Size = UDim2.new(1, 0, 0, 35)
+    Head.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    Head.BorderSizePixel = 2
+    Head.BorderColor3 = Color3.new(0,0,0)
     
-    local function CreateXLine(rotation)
-        local Line = Instance.new("Frame")
-        Line.Parent = CloseArea
-        Line.Size = UDim2.new(1, 0, 0, 4)
-        Line.Rotation = rotation
-        Line.Position = UDim2.new(0, 0, 0.5, -2)
-        Line.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-        Line.BorderSizePixel = 0
-        return Line
+    local Title = Instance.new("TextLabel", Head)
+    Title.Text = "  " .. UI_Name
+    Title.Size = UDim2.new(1, -40, 1, 0)
+    Title.TextColor3 = Color3.new(1,1,1)
+    Title.BackgroundTransparency = 1
+    Title.Font = Enum.Font.SourceSansBold
+    Title.TextSize = 16
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+
+    -- Container Fitur
+    local Container = Instance.new("ScrollingFrame", Main)
+    Container.Size = UDim2.new(1, -20, 1, -50)
+    Container.Position = UDim2.new(0, 10, 0, 45)
+    Container.BackgroundTransparency = 1
+    Container.CanvasSize = UDim2.new(0, 0, 5, 0)
+    Container.ScrollBarThickness = 2
+    local Layout = Instance.new("UIListLayout", Container)
+    Layout.Padding = UDim.new(0, 5)
+
+    -- === LOGO CLEAR (Kecil & Draggable) ===
+    local OpenBtn = Instance.new("TextButton", sg)
+    OpenBtn.Size = UDim2.new(0, 50, 0, 50)
+    OpenBtn.Position = UDim2.new(0, 20, 0.5, -25)
+    OpenBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 127)
+    OpenBtn.BorderSizePixel = 3
+    OpenBtn.BorderColor3 = Color3.new(0,0,0)
+    OpenBtn.Text = Flt_Name
+    OpenBtn.Font = Enum.Font.SourceSansBold
+    OpenBtn.TextSize = 12
+    OpenBtn.Visible = false
+    Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(1, 0)
+    MakeDraggable(OpenBtn) -- Tombol kecil juga bisa di drag
+
+    -- Logic Close/Open
+    local CloseBtn = Instance.new("TextButton", Head)
+    CloseBtn.Size = UDim2.new(0, 30, 0, 30)
+    CloseBtn.Position = UDim2.new(1, -33, 0, 2)
+    CloseBtn.Text = "X"
+    CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+    CloseBtn.TextColor3 = Color3.new(1,1,1)
+    Instance.new("UICorner", CloseBtn)
+
+    CloseBtn.MouseButton1Click:Connect(function() Main.Visible = false OpenBtn.Visible = true end)
+    OpenBtn.MouseButton1Click:Connect(function() Main.Visible = true OpenBtn.Visible = false end)
+
+    local Elements = {}
+
+    function Elements:AddToggle(cfg)
+        local tgl = Instance.new("TextButton", Container)
+        tgl.Size = UDim2.new(1, 0, 0, 35)
+        tgl.BackgroundColor3 = Color3.fromRGB(0, 255, 127)
+        tgl.BorderSizePixel = 3
+        tgl.BorderColor3 = Color3.new(0,0,0)
+        tgl.Text = "  " .. cfg.Name
+        tgl.Font = Enum.Font.SourceSansBold
+        tgl.TextXAlignment = "Left"
+        
+        local ind = Instance.new("Frame", tgl)
+        ind.Size = UDim2.new(0, 15, 0, 15)
+        ind.Position = UDim2.new(1, -25, 0.5, -7)
+        ind.BackgroundColor3 = Color3.new(0,1,1)
+        Instance.new("UICorner", ind).CornerRadius = UDim.new(1,0)
+
+        local s = false
+        tgl.MouseButton1Click:Connect(function()
+            s = not s
+            cfg.Callback(s)
+            tgl.BackgroundColor3 = s and Color3.fromRGB(0, 100, 255) or Color3.fromRGB(0, 255, 127)
+            ind.BackgroundColor3 = s and Color3.fromRGB(0, 0, 100) or Color3.fromRGB(0, 1, 1)
+        end)
     end
-    CreateXLine(45)
-    CreateXLine(-45)
 
-    local CloseButton = Instance.new("TextButton")
-    CloseButton.Parent = CloseArea
-    CloseButton.Size = UDim2.new(1, 0, 1, 0)
-    CloseButton.BackgroundTransparency = 1
-    CloseButton.Text = ""
+    function Elements:AddTextbox(cfg)
+        local box = Instance.new("TextBox", Container)
+        box.Size = UDim2.new(1, 0, 0, 35)
+        box.PlaceholderText = " " .. cfg.Name
+        box.Text = cfg.Default or ""
+        box.BackgroundColor3 = Color3.new(1,1,1)
+        box.BorderSizePixel = 3
+        box.BorderColor3 = Color3.new(0,0,0)
+        box.Font = Enum.Font.SourceSans
+        box.TextColor3 = Color3.new(0,0,0)
+        box.FocusLost:Connect(function() cfg.Callback(box.Text) end)
+    end
 
-    -- === 3. Lingkaran Tosca (Minified) ===
-    local OpenBtnFrame = Instance.new("Frame")
-    OpenBtnFrame.Parent = ScreenGui
-    OpenBtnFrame.BackgroundColor3 = Color3.fromRGB(0, 255, 127)
-    OpenBtnFrame.BorderSizePixel = 4
-    OpenBtnFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    OpenBtnFrame.Size = UDim2.new(0, 100, 0, 100)
-    OpenBtnFrame.Position = UDim2.new(0, 20, 0, 20)
-    OpenBtnFrame.Visible = false
-
-    local UICornerOpen = Instance.new("UICorner")
-    UICornerOpen.CornerRadius = UDim.new(1, 0)
-    UICornerOpen.Parent = OpenBtnFrame
-
-    local OpenText = Instance.new("TextLabel")
-    OpenText.Parent = OpenBtnFrame
-    OpenText.Size = UDim2.new(1, 0, 1, 0)
-    OpenText.BackgroundTransparency = 1
-    OpenText.Font = Enum.Font.GothamBold
-    OpenText.Text = minifiedText or "CLEAR LIB"
-    OpenText.TextColor3 = Color3.fromRGB(0, 0, 0)
-    OpenText.TextSize = 14
-    OpenText.TextWrapped = true
-
-    local OpenButton = Instance.new("TextButton")
-    OpenButton.Parent = OpenBtnFrame
-    OpenButton.Size = UDim2.new(1, 0, 1, 0)
-    OpenButton.BackgroundTransparency = 1
-    OpenButton.Text = ""
-
-    -- Logika Buka/Tutup
-    CloseButton.MouseButton1Click:Connect(function()
-        MainFrame.Visible = false
-        OpenBtnFrame.Visible = true
-    end)
-
-    OpenButton.MouseButton1Click:Connect(function()
-        MainFrame.Visible = true
-        OpenBtnFrame.Visible = false
-    end)
-
-    return Content
+    return Elements
 end
 
 return ClearLib
