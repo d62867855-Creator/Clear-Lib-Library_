@@ -2,10 +2,10 @@ local ClearLib = {}
 
 function ClearLib:CreateWindow(UI_Name, Flt_Name)
     local sg = Instance.new("ScreenGui", game.CoreGui)
-    sg.Name = "ClearLib_Official_Final"
+    sg.Name = "ClearLib_Bold_Version"
     sg.ResetOnSpawn = false
 
-    -- === FUNGSI DRAG (LANCAR JAYA) ===
+    -- === FUNGSI DRAG (LANCAR) ===
     local function MakeDraggable(frame)
         local dragToggle, dragStart, startPos
         frame.InputBegan:Connect(function(input)
@@ -26,84 +26,129 @@ function ClearLib:CreateWindow(UI_Name, Flt_Name)
         end)
     end
 
-    -- === MAIN WINDOW (UKURAN RAYFIELD: 400x250) ===
+    -- === WINDOW UTAMA (EKSTRA TEBAL & KAKU) ===
     local Main = Instance.new("Frame", sg)
-    Main.Name = "MainFrame"
     Main.Size = UDim2.new(0, 400, 0, 250)
     Main.Position = UDim2.new(0.5, -200, 0.5, -125)
-    Main.BackgroundColor3 = Color3.fromRGB(0, 255, 127) -- TETAP TOSCA
-    Main.BorderSizePixel = 4
+    Main.BackgroundColor3 = Color3.fromRGB(0, 255, 127) -- Tosca Sesuai Gambar
+    Main.BorderSizePixel = 6 -- GARIS TEBAL BANGET
     Main.BorderColor3 = Color3.new(0, 0, 0)
     Main.Active = true
     MakeDraggable(Main)
 
-    -- Header Abu-Abu
+    -- Header (Batas Hitam Tegas)
     local Head = Instance.new("Frame", Main)
-    Head.Name = "Header"
-    Head.Size = UDim2.new(1, 0, 0, 35)
-    Head.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-    Head.BorderSizePixel = 2
+    Head.Size = UDim2.new(1, 0, 0, 45)
+    Head.BackgroundColor3 = Color3.fromRGB(100, 100, 100) -- Abu-abu
+    Head.BorderSizePixel = 5
     Head.BorderColor3 = Color3.new(0, 0, 0)
     
     local Title = Instance.new("TextLabel", Head)
     Title.Text = "  " .. UI_Name
-    Title.Size = UDim2.new(1, -40, 1, 0)
+    Title.Size = UDim2.new(1, -50, 1, 0)
     Title.TextColor3 = Color3.new(1, 1, 1)
     Title.BackgroundTransparency = 1
     Title.Font = Enum.Font.SourceSansBold
-    Title.TextSize = 16
-    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.TextSize = 20
+    Title.TextXAlignment = "Left"
 
-    -- Container Fitur (Scrolling)
+    -- Container Fitur
     local Container = Instance.new("ScrollingFrame", Main)
-    Container.Name = "FeatureContainer"
-    Container.Size = UDim2.new(1, -20, 1, -50)
-    Container.Position = UDim2.new(0, 10, 0, 45)
+    Container.Size = UDim2.new(1, -20, 1, -70)
+    Container.Position = UDim2.new(0, 10, 0, 55)
     Container.BackgroundTransparency = 1
     Container.CanvasSize = UDim2.new(0, 0, 0, 0)
-    Container.AutomaticCanvasSize = Enum.AutomaticSize.Y
-    Container.ScrollBarThickness = 2
+    Container.AutomaticCanvasSize = "Y"
+    Container.ScrollBarThickness = 5
     
     local Layout = Instance.new("UIListLayout", Container)
-    Layout.Padding = UDim.new(0, 5)
+    Layout.Padding = UDim.new(0, 10) -- Jarak antar tombol biar batasnya kelihatan jelas
 
-    -- === LOGO OPEN KECIL (SHIFTLOCK SIZE) ===
+    -- === LOGO KECIL (TEBAL SEUKURAN SHIFTLOCK) ===
     local OpenBtn = Instance.new("TextButton", sg)
-    OpenBtn.Name = "OpenButton"
-    OpenBtn.Size = UDim2.new(0, 50, 0, 50)
+    OpenBtn.Size = UDim2.new(0, 55, 0, 55)
     OpenBtn.Position = UDim2.new(0, 20, 0.5, -25)
     OpenBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 127)
-    OpenBtn.BorderSizePixel = 3
+    OpenBtn.BorderSizePixel = 5
     OpenBtn.BorderColor3 = Color3.new(0, 0, 0)
-    OpenBtn.Text = Flt_Name or "CLEAR"
+    OpenBtn.Text = Flt_Name
     OpenBtn.Font = Enum.Font.SourceSansBold
-    OpenBtn.TextSize = 12
+    OpenBtn.TextColor3 = Color3.new(0,0,0)
     OpenBtn.Visible = false
     Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(1, 0)
     MakeDraggable(OpenBtn)
 
-    -- Tombol Close X Merah
+    -- Tombol Close X (Kotak Tebal)
     local CloseBtn = Instance.new("TextButton", Head)
     CloseBtn.Size = UDim2.new(0, 30, 0, 30)
-    CloseBtn.Position = UDim2.new(1, -33, 0, 2)
+    CloseBtn.Position = UDim2.new(1, -38, 0, 7)
+    CloseBtn.BackgroundColor3 = Color3.new(1, 0, 0)
     CloseBtn.Text = "X"
-    CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
     CloseBtn.TextColor3 = Color3.new(1, 1, 1)
-    Instance.new("UICorner", CloseBtn)
+    CloseBtn.BorderSizePixel = 3
+    CloseBtn.BorderColor3 = Color3.new(0, 0, 0)
 
     CloseBtn.MouseButton1Click:Connect(function() Main.Visible = false OpenBtn.Visible = true end)
     OpenBtn.MouseButton1Click:Connect(function() Main.Visible = true OpenBtn.Visible = false end)
 
     local Elements = {}
 
-    -- [[ FUNGSI TOGGLE ]]
+    -- [[ TOGGLE DENGAN BATAS EKSTRA TEBAL ]]
     function Elements:AddToggle(cfg)
         local toggled = false
         local tgl = Instance.new("TextButton", Container)
-        tgl.Name = cfg.Name .. "_Toggle"
-        tgl.Size = UDim2.new(1, 0, 0, 35)
-        tgl.BackgroundColor3 = Color3.fromRGB(0, 255, 127) -- Default Tosca
-        tgl.BorderSizePixel = 3
+        tgl.Size = UDim2.new(1, 0, 0, 45)
+        tgl.BackgroundColor3 = Color3.fromRGB(0, 255, 127)
+        tgl.BorderSizePixel = 5 -- Sesuai permintaanmu: Ekstra Tebal
+        tgl.BorderColor3 = Color3.new(0, 0, 0)
+        tgl.Text = "  " .. cfg.Name
+        tgl.Font = Enum.Font.SourceSansBold
+        tgl.TextSize = 18
+        tgl.TextColor3 = Color3.new(0, 0, 0)
+        tgl.TextXAlignment = "Left"
+        
+        -- Indikator Toggle (Kotak Tebal)
+        local ind = Instance.new("Frame", tgl)
+        ind.Size = UDim2.new(0, 22, 0, 22)
+        ind.Position = UDim2.new(1, -35, 0.5, -11)
+        ind.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
+        ind.BorderSizePixel = 4
+        ind.BorderColor3 = Color3.new(0, 0, 0)
+
+        tgl.MouseButton1Click:Connect(function()
+            toggled = not toggled
+            cfg.Callback(toggled)
+            
+            -- Perubahan warna tegas (Tosca ke Biru)
+            if toggled then
+                tgl.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+                ind.BackgroundColor3 = Color3.fromRGB(0, 0, 150)
+            else
+                tgl.BackgroundColor3 = Color3.fromRGB(0, 255, 127)
+                ind.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
+            end
+        end)
+    end
+
+    -- [[ TEXTBOX (Sesuai Permintaan: Nanti Kamu Urus Visualnya) ]]
+    function Elements:AddTextbox(cfg)
+        local box = Instance.new("TextBox", Container)
+        box.Size = UDim2.new(1, 0, 0, 40)
+        box.PlaceholderText = " " .. cfg.Name
+        box.Text = cfg.Default or ""
+        box.BackgroundColor3 = Color3.new(1, 1, 1)
+        box.BorderSizePixel = 4
+        box.BorderColor3 = Color3.new(0, 0, 0)
+        box.Font = Enum.Font.SourceSansBold
+        box.TextSize = 16
+        box.TextColor3 = Color3.new(0, 0, 0)
+        box.FocusLost:Connect(function() cfg.Callback(box.Text) end)
+    end
+
+    return Elements
+end
+
+return ClearLib
         tgl.BorderColor3 = Color3.new(0, 0, 0)
         tgl.Text = "  " .. cfg.Name
         tgl.Font = Enum.Font.SourceSansBold
