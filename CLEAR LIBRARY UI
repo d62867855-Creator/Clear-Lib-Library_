@@ -32,7 +32,6 @@ function ClearLib:CreateWindow(UI_Name, Flt_Name)
     FloatingBtn.Position = UDim2.new(0, 20, 0.5, -30)
     FloatingBtn.BackgroundColor3 = Color3.fromRGB(85, 230, 180)
     FloatingBtn.BorderSizePixel = 4
-    FloatingBtn.BorderMode = Enum.BorderMode.Inset -- Biar border gak kepotong
     FloatingBtn.BorderColor3 = Color3.new(0, 0, 0)
     FloatingBtn.Text = tostring(Flt_Name or "CLEAR")
     FloatingBtn.Font = Enum.Font.SourceSansBold
@@ -40,7 +39,7 @@ function ClearLib:CreateWindow(UI_Name, Flt_Name)
     FloatingBtn.TextColor3 = Color3.new(0, 0, 0)
     MakeDraggable(FloatingBtn)
 
-    -- === MAIN WINDOW (PERSEGI PANJANG TOTAL) ===
+    -- === MAIN WINDOW ===
     local Main = Instance.new("Frame", sg)
     Main.Visible = true
     Main.Size = UDim2.new(0, 420, 0, 260)
@@ -69,8 +68,8 @@ function ClearLib:CreateWindow(UI_Name, Flt_Name)
     Title.TextSize = 22
 
     local Container = Instance.new("ScrollingFrame", Main)
-    Container.Size = UDim2.new(1, -30, 1, -75)
-    Container.Position = UDim2.new(0, 15, 0, 60)
+    Container.Size = UDim2.new(1, -20, 1, -75)
+    Container.Position = UDim2.new(0, 10, 0, 60)
     Container.BackgroundTransparency = 1
     Container.BorderSizePixel = 0
     Container.CanvasSize = UDim2.new(0, 0, 0, 0)
@@ -78,17 +77,18 @@ function ClearLib:CreateWindow(UI_Name, Flt_Name)
     Container.ScrollBarThickness = 5
     
     local Layout = Instance.new("UIListLayout", Container)
-    Layout.Padding = UDim.new(0, 15) -- Jarak biar gak dempet
+    Layout.Padding = UDim.new(0, 15)
 
     local Elements = {}
 
-    -- [[ TOGGLE PERSEGI PANJANG FULL BORDER ]]
+    -- [[ TOGGLE FIX BORDER ]]
     function Elements:AddToggle(cfg)
         local toggled = false
         local tglFrame = Instance.new("Frame", Container)
-        tglFrame.Size = UDim2.new(1, 0, 0, 50)
+        tglFrame.Size = UDim2.new(0.95, 0, 0, 50) -- Ukuran dikurangi biar border samping gak ilang
         tglFrame.BackgroundColor3 = Color3.fromRGB(85, 230, 180)
-        tglFrame.BorderSizePixel = 4 -- PEMBATAS SAMPING, ATAS, BAWAH
+        tglFrame.BorderSizePixel = 4 
+        tglFrame.BorderMode = Enum.BorderMode.Inset -- INI KUNCINYA BIAR BORDER MASUK KE DALAM
         tglFrame.BorderColor3 = Color3.new(0, 0, 0)
         
         local tglBtn = Instance.new("TextButton", tglFrame)
@@ -100,12 +100,12 @@ function ClearLib:CreateWindow(UI_Name, Flt_Name)
         tglBtn.TextColor3 = Color3.new(0, 0, 0)
         tglBtn.TextXAlignment = "Left"
         
-        -- KOTAK KECIL PEMBATAS DI KANAN
         local box = Instance.new("Frame", tglFrame)
         box.Size = UDim2.new(0, 35, 0, 35)
         box.Position = UDim2.new(1, -45, 0.5, -17)
         box.BackgroundTransparency = 1
         box.BorderSizePixel = 3
+        box.BorderMode = Enum.BorderMode.Inset
         box.BorderColor3 = Color3.new(0, 0, 0)
 
         local symbol = Instance.new("TextLabel", box)
@@ -124,12 +124,13 @@ function ClearLib:CreateWindow(UI_Name, Flt_Name)
         end)
     end
 
-    -- [[ TEXTBOX PERSEGI PANJANG FULL BORDER ]]
+    -- [[ TEXTBOX FIX BORDER ]]
     function Elements:AddTextbox(cfg)
         local boxFrame = Instance.new("Frame", Container)
-        boxFrame.Size = UDim2.new(1, 0, 0, 50)
+        boxFrame.Size = UDim2.new(0.95, 0, 0, 50)
         boxFrame.BackgroundColor3 = Color3.fromRGB(85, 230, 180)
-        boxFrame.BorderSizePixel = 4 -- PEMBATAS SAMPING UTUH
+        boxFrame.BorderSizePixel = 4
+        boxFrame.BorderMode = Enum.BorderMode.Inset
         boxFrame.BorderColor3 = Color3.new(0, 0, 0)
 
         local label = Instance.new("TextLabel", boxFrame)
@@ -147,6 +148,7 @@ function ClearLib:CreateWindow(UI_Name, Flt_Name)
         input.Text = tostring(cfg.Default or "")
         input.BackgroundColor3 = Color3.new(1, 1, 1)
         input.BorderSizePixel = 3
+        input.BorderMode = Enum.BorderMode.Inset
         input.BorderColor3 = Color3.new(0, 0, 0)
         input.Font = Enum.Font.SourceSansBold
         input.TextSize = 16
@@ -158,4 +160,3 @@ function ClearLib:CreateWindow(UI_Name, Flt_Name)
 end
 
 return ClearLib
-
